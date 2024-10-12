@@ -2,6 +2,9 @@
 
 import React, { Fragment, useState } from 'react';
 import Header from '../components/Header';
+import { useSelector, useDispatch } from 'react-redux';
+import { userRegister } from '../store/AuthSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -9,19 +12,21 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
+
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (password !== confirmPassword) {
-      setError("Passwords don't match");
+      alert("Passwords do not match");
       return;
     }
-
-    // Handle sign-up logic here (e.g., API call)
-    console.log('Sign up with:', { email, password });
-    setError('');
-  };
-
+    dispatch(userRegister({ email, password }))
+     navigate('/login')
+  }
+    
   return (
     <Fragment>
       <Header />
