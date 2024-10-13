@@ -1,21 +1,70 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
+import { firestore} from '../firebase/firebase'
+import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 
 function ExpenseForm() {
 
-    const [amount, setAmount] = useState('');
+    // useState
+  const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Food');
   const [expenses, setExpenses] = useState([]);
+
+  //  firestore collection 
+    const expenseCollection = collection(firestore, "expense")
 
 
     const handleSubmit = (e)=>{
         e.preventDefault()
         const newExpenses = {amount, description, category}
-        setExpenses([...expenses, newExpenses])
-        setAmount('')
-        setDescription('')
-        setCategory('Food')
+        // setExpenses([...expenses, newExpenses])
+        
+        const createExpense = async(newExpenses)=>{
+          try{
+            await addDoc(expenseCollection, newExpenses)
+            setAmount('')
+            setDescription('')
+            setCategory('Food')
+          }
+          catch(error){console.log(error.message)}
+        }
+        createExpense(newExpenses)      
     }
+
+    const deleteHandler = async(id)=>{
+      try{
+        // const docRef = doc(db, 'your_collection_name', id);
+        const docRef    = doc(firestore,'expense', id)
+        await deleteDoc(docRef)
+      }
+      catch(error){console.log('errr')}
+    }
+
+    const updateHandler = async(id)=>{
+      const updateExpenses = {amount, description, category}
+
+      try{
+        const docRef = doc(firestore, 'expense', id)
+        updateDoc(docRef, updateExpenses)
+      }
+      catch(error){console.log('error')}
+    }
+
+    useEffect(()=>{
+      const getData = async()=>{
+        try{
+          const data = await getDocs(expenseCollection)
+          const docs = data.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setExpenses(docs);
+        }
+        catch(error){console.log(error.message)}
+      }
+      getData()
+    },[expenseCollection])
+
   return (
 <Fragment>
    <div>
@@ -45,7 +94,6 @@ function ExpenseForm() {
             <option value="Food">Food</option>
             <option value="Petrol">Petrol</option>
             <option value="Salary">Salary</option>
-            {/* Add more categories as needed */}
           </select>
         </div>
         <button type="submit">Add Expense</button>
@@ -55,7 +103,7 @@ function ExpenseForm() {
       <ul>
         {expenses.map((expense, index) => (
           <li key={index}>
-            {expense.amount} - {expense.description} - {expense.category}
+            {expense.amount} - {expense.description} - {expense.category} - <button onClick={()=>updateHandler(expense.id)}>Update</button> - <button onClick={()=>deleteHandler(expense.id)}>delete</button>
           </li>
         ))}
       </ul>
