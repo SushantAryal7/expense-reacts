@@ -1,14 +1,20 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { firestore} from '../firebase/firebase'
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { useDispatch } from 'react-redux';
+import { logout } from '../store/AuthSlice';
+import { useNavigate } from 'react-router-dom';
 
-function ExpenseForm() {
+function ExpenseForm({onchange}) {
 
     // useState
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Food');
   const [expenses, setExpenses] = useState([]);
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   //  firestore collection 
     const expenseCollection = collection(firestore, "expense")
@@ -21,10 +27,12 @@ function ExpenseForm() {
         
         const createExpense = async(newExpenses)=>{
           try{
-            await addDoc(expenseCollection, newExpenses)
+            if(amount && description){
+              await addDoc(expenseCollection, newExpenses)
             setAmount('')
             setDescription('')
             setCategory('Food')
+            }
           }
           catch(error){console.log(error.message)}
         }
@@ -45,9 +53,23 @@ function ExpenseForm() {
 
       try{
         const docRef = doc(firestore, 'expense', id)
-        updateDoc(docRef, updateExpenses)
+        if(amount && description){
+          await updateDoc(docRef, updateExpenses)
+          setAmount('')
+          setDescription('')
+          setCategory('Food')
+        }
+        
       }
       catch(error){console.log('error')}
+    }
+
+    const logOut = ()=>{
+      dispatch(logout())
+      onchange(null)
+
+      navigate('/')
+      
     }
 
     useEffect(()=>{
@@ -107,6 +129,7 @@ function ExpenseForm() {
           </li>
         ))}
       </ul>
+      <h2><button onClick={logOut}>Logout</button></h2>
 
    </div>
 </Fragment>  )

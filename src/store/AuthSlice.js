@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { createUserWithEmailAndPassword, sendEmailVerification, signInWithCredential, signOut }  from 'firebase/auth'
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signOut }  from 'firebase/auth'
 import { auth } from '../firebase/firebase'
+
+console.log('slice page')
 
 export const userRegister = createAsyncThunk('auth/register', async({email, password})=>{
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
@@ -10,12 +12,19 @@ export const userRegister = createAsyncThunk('auth/register', async({email, pass
 })
 
 export const loginUser = createAsyncThunk('auth/login', async({email, password})=>{
-    const userCredential  = await signInWithCredential(auth, email, password)
+    console.log('login function start')
+    const userCredential  = await signInWithEmailAndPassword(auth, email, password)
+    // console.log(userCredential.user,'inside login user function'    )
     return userCredential.user
 })
+
+
 export const logout  = createAsyncThunk('auth/logout', async()=>{
+    console.log('llog out')
     await signOut(auth)
 })
+
+
 
 
 const AuthSlice = createSlice({

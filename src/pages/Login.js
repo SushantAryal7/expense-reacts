@@ -15,9 +15,13 @@ const Login = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    const loginHandler = ()=>{
+    const loginHandler = (event)=>{
+      event.preventDefault()
+        console.log('hiiii')
         dispatch(loginUser({email, password}))
-        navigate('/home')
+        console.log('last        hiiii')
+
+        navigate('/')
     }
 
   return (
@@ -25,7 +29,7 @@ const Login = () => {
       <Header />
       <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
       <h2>Login</h2>
-      <form>
+      <form onSubmit={loginHandler}>
       <div>
           <label>Email:</label>
           <input
@@ -49,7 +53,7 @@ const Login = () => {
         <Link to="/forget-password">Forget password?</Link>
         </p>
         
-        <button onClick={loginHandler} type="submit">Login</button>
+        <button  type="submit">Login</button>
       </form>
       <p>
         Don't have an account?  <Link to="/signup">Sign Up</Link>
