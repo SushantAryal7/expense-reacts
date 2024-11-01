@@ -1,0 +1,22 @@
+.expenseform{
+    position: fixed;
+    top:20vh;
+    left:25%;
+    background-color: rgb(232, 239, 245);
+    margin: auto;
+    padding: auto;
+}
+
+.expenseformBox{
+    background-color: whitesmoke;
+    height: 100vh;
+    width: 100%;
+}
+
+.expenseform div{
+    margin:5%;
+}
+
+.expenseform .button{
+    margin-left:10%;
+}

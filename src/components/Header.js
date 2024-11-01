@@ -1,6 +1,6 @@
 // Header.js
-import React from 'react';
-import './Header.css'; // Import CSS for styling
+import React from "react";
+import "./Header.css"; // Import CSS for styling
 
 const Header = () => {
   return (
@@ -8,9 +8,15 @@ const Header = () => {
       <div className="logo">My WebLink</div>
       <nav className="nav">
         <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
+          <li>
+            <a href="/">Home</a>
+          </li>
+          <li>
+            <a href="/private/about">About</a>
+          </li>
+          <li>
+            <a href="/private/contactdetail">Contact</a>
+          </li>
         </ul>
       </nav>
     </header>
