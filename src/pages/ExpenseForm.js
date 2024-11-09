@@ -1,6 +1,9 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { firestore } from "../firebase/firebase";
+
 import {
+  query,
+  where,
   collection,
   getDocs,
   addDoc,
@@ -21,30 +24,44 @@ function ExpenseForm() {
   const [category, setCategory] = useState("Food");
   const [expenses, setExpenses] = useState([]);
 
+  const local = JSON.parse(localStorage.getItem("login"));
+  // console.log("local", local);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const expenseCollection = collection(firestore, "expense");
 
   //  firestore collection
-  const expenseCollection = collection(firestore, "expense");
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("handle submit 1");
     const newExpenses = { amount, description, category };
     // setExpenses([...expenses, newExpenses])
+    console.log("handle submit 2");
 
     const createExpense = async (newExpenses) => {
       try {
         if (amount && description) {
-          await addDoc(expenseCollection, newExpenses);
+          console.log("handle submit 3", newExpenses);
+          console.log("local inside", local);
+          // await addDoc(expenseCollection, { local: newExpenses });
+          await addDoc(expenseCollection, {
+            email: local,
+            otherField: newExpenses,
+          });
           setAmount("");
           setDescription("");
           setCategory("Food");
+          console.log("handle submit 5");
         }
       } catch (error) {
-        console.log(error.message);
+        console.log("error", error.message);
+        console.log("handle submit 6");
       }
     };
     createExpense(newExpenses);
+    console.log("handle submit 7");
   };
 
   const deleteHandler = async (id) => {
@@ -88,19 +105,22 @@ function ExpenseForm() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const data = await getDocs(expenseCollection);
-        const docs = data.docs.map((doc) => ({
+        const usersQuery = query(
+          collection(firestore, "expense"), // Reference to the 'users' collection
+          where("email", "==", local) // Filter for users older than 25
+        );
+        const querySnapshot = await getDocs(usersQuery); // 'users' is the Firestore collection
+        const usersList = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        setExpenses(docs);
+        setExpenses(usersList);
       } catch (error) {
-        console.log(error.message);
+        console.log("this is error", error.message);
       }
     };
     getData();
-  }, [expenseCollection]);
-
+  }, [expenseCollection, local]);
   return (
     <Fragment>
       <Header />
@@ -145,7 +165,8 @@ function ExpenseForm() {
           <ul>
             {expenses.map((expense, index) => (
               <li key={index}>
-                {expense.amount} - {expense.description} - {expense.category} -{" "}
+                {expense.otherField.amount} - {expense.otherField.description} -{" "}
+                {expense.otherField.category} -{" "}
                 <button onClick={() => updateHandler(expense.id)}>
                   Update
                 </button>{" "}

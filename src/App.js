@@ -18,9 +18,8 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (users) => {
       if (users) {
-        localStorage.setItem("login", JSON.stringify("users"));
-        setUser(true);
-        console.log(users);
+        localStorage.setItem("login", JSON.stringify(users.uid));
+        setUser(users.uid);
       }
     });
 

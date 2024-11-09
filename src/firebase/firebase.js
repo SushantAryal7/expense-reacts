@@ -16,13 +16,12 @@ const firebaseConfig = {
   storageBucket: "expenses-tracker-db69a.appspot.com",
   messagingSenderId: "80214189585",
   appId: "1:80214189585:web:deb30c3bc743ee821033b0",
-  measurementId: "G-ZYMWB4ZHRY"
-  
+  measurementId: "G-ZYMWB4ZHRY",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
-export const auth      = getAuth(app)
-export const firestore = getFirestore(app)
-export const storage = getStorage(app)
+export const auth = getAuth(app);
+export const firestore = getFirestore(app);
+export const storage = getStorage(app);
